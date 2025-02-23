@@ -5,7 +5,8 @@ Click the following image to view this tutorial on Youtube.
 [![Youtube video link](https://i.ytimg.com/vi/gTd6dm9ONSk/hqdefault.jpg)](//youtu.be/gTd6dm9ONSk "Youtube Video")
 
 This tutorial works with Pico v2.1.1, FreeRTOS v11.0.1 and LVGL v9.2.2.  
-LCD TFT 3.5" ILI9488 with touch XPT2046. The document is available at https://www.waveshare.com/wiki/Pico-ResTouch-LCD-3.5  
+LCD TFT 3.5" ILI9488 with touch XPT2046.  
+The document is available at https://www.waveshare.com/wiki/Pico-ResTouch-LCD-3.5  
 
 Install Raspberry Pi Pico VS Code extension and use it to create a new project.  
 
