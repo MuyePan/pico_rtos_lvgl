@@ -40,7 +40,7 @@ Change millisecond delay function to vTaskDelay in DEV_Config.c.
 ```
 void Driver_Delay_ms(uint32_t xms)
 {
-	vTaskDelay(pdMS_TO_TICKS(xms));
+    vTaskDelay(pdMS_TO_TICKS(xms));
 }
 ```
 Modify microsecond delay function as following in DEV_Config.c
@@ -63,56 +63,32 @@ void TP_Scan(uint32_t *x, uint32_t *y)
     if(LCD_2_8==id){
 
         if(sTP_DEV.TP_Scan_Dir == R2L_D2U) {		//Converts the result to screen coordinates
-            *x = sTP_DEV.fXfac * sTP_DEV.Xpoint +
-                                sTP_DEV.iXoff;
-            *y = sTP_DEV.fYfac * sTP_DEV.Ypoint +
-                                sTP_DEV.iYoff;
+            *x = sTP_DEV.fXfac * sTP_DEV.Xpoint + sTP_DEV.iXoff;
+            *y = sTP_DEV.fYfac * sTP_DEV.Ypoint + sTP_DEV.iYoff;
         } else if(sTP_DEV.TP_Scan_Dir == L2R_U2D) {
-            *x = sLCD_DIS.LCD_Dis_Column -
-                                sTP_DEV.fXfac * sTP_DEV.Xpoint -
-                                sTP_DEV.iXoff;
-            *y = sLCD_DIS.LCD_Dis_Page -
-                                sTP_DEV.fYfac * sTP_DEV.Ypoint -
-                                sTP_DEV.iYoff;
+            *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Xpoint - sTP_DEV.iXoff;
+            *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Ypoint - sTP_DEV.iYoff;
         } else if(sTP_DEV.TP_Scan_Dir == U2D_R2L) {
-            *x = sTP_DEV.fXfac * sTP_DEV.Ypoint +
-                                sTP_DEV.iXoff;
-            *y = sTP_DEV.fYfac * sTP_DEV.Xpoint +
-                                sTP_DEV.iYoff;
+            *x = sTP_DEV.fXfac * sTP_DEV.Ypoint + sTP_DEV.iXoff;
+            *y = sTP_DEV.fYfac * sTP_DEV.Xpoint + sTP_DEV.iYoff;
         } else {
-            *x = sLCD_DIS.LCD_Dis_Column -
-                                sTP_DEV.fXfac * sTP_DEV.Ypoint -
-                                sTP_DEV.iXoff;
-            *y = sLCD_DIS.LCD_Dis_Page -
-                                sTP_DEV.fYfac * sTP_DEV.Xpoint -
-                                sTP_DEV.iYoff;
+            *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Ypoint - sTP_DEV.iXoff;
+            *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Xpoint - sTP_DEV.iYoff;
         }
     }else{
         //DEBUG("(Xad,Yad) = %d,%d\r\n",sTP_DEV.Xpoint,sTP_DEV.Ypoint);
         if(sTP_DEV.TP_Scan_Dir == R2L_D2U) {		//Converts the result to screen coordinates
-            *x = sTP_DEV.fXfac * sTP_DEV.Xpoint +
-                                sTP_DEV.iXoff;
-            *y = sTP_DEV.fYfac * sTP_DEV.Ypoint +
-                                sTP_DEV.iYoff;
+            *x = sTP_DEV.fXfac * sTP_DEV.Xpoint + sTP_DEV.iXoff;
+            *y = sTP_DEV.fYfac * sTP_DEV.Ypoint + sTP_DEV.iYoff;
         } else if(sTP_DEV.TP_Scan_Dir == L2R_U2D) {
-            *x = sLCD_DIS.LCD_Dis_Column -
-                                sTP_DEV.fXfac * sTP_DEV.Xpoint -
-                                sTP_DEV.iXoff;
-            *y = sLCD_DIS.LCD_Dis_Page -
-                                sTP_DEV.fYfac * sTP_DEV.Ypoint -
-                                sTP_DEV.iYoff;
+            *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Xpoint - sTP_DEV.iXoff;
+            *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Ypoint - sTP_DEV.iYoff;
         } else if(sTP_DEV.TP_Scan_Dir == U2D_R2L) {
-            *x = sTP_DEV.fXfac * sTP_DEV.Ypoint +
-                                sTP_DEV.iXoff;
-            *y = sTP_DEV.fYfac * sTP_DEV.Xpoint +
-                                sTP_DEV.iYoff;
+            *x = sTP_DEV.fXfac * sTP_DEV.Ypoint + sTP_DEV.iXoff;
+            *y = sTP_DEV.fYfac * sTP_DEV.Xpoint + sTP_DEV.iYoff;
         } else {
-            *x = sLCD_DIS.LCD_Dis_Column -
-                                sTP_DEV.fXfac * sTP_DEV.Ypoint -
-                                sTP_DEV.iXoff;
-            *y = sLCD_DIS.LCD_Dis_Page -
-                                sTP_DEV.fYfac * sTP_DEV.Xpoint -
-                                sTP_DEV.iYoff;
+            *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Ypoint - sTP_DEV.iXoff;
+            *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Xpoint - sTP_DEV.iYoff;
         }
     }   
 }
@@ -136,16 +112,15 @@ Modify link libraries in CMakeList.txt
 ```
 set(toolchainVersion 13_3_Rel1) # 14_1_rel1 not working
 
-target_link_libraries(lvgl_rtos_test
-        pico_stdlib FreeRTOS-Kernel-Heap4 lvgl hardware_spi)
+target_link_libraries(lvgl_rtos_test pico_stdlib FreeRTOS-Kernel-Heap4 lvgl hardware_spi)
 ```
 
 Add LVGL gateway task in main.c
 ```
 void lvgl_task(void *pvParameters) {
-	LCD_SCAN_DIR lcd_scan_dir = SCAN_DIR_DFT;
-	LCD_Init(lcd_scan_dir, 800);
-	TP_Init(lcd_scan_dir);
+    LCD_SCAN_DIR lcd_scan_dir = SCAN_DIR_DFT;
+    LCD_Init(lcd_scan_dir, 800);
+    TP_Init(lcd_scan_dir);
     TP_GetAdFac();
 
     while (1) {
@@ -160,7 +135,7 @@ Callback to read input device data in main.c
 void my_input_read(lv_indev_t * indev, lv_indev_data_t * data)
 {
     if(!DEV_Digital_Read(TP_IRQ_PIN)) {
-		TP_Scan(&data->point.x, &data->point.y);
+        TP_Scan(&data->point.x, &data->point.y);
         data->state = LV_INDEV_STATE_PRESSED;
     } else {
         data->state = LV_INDEV_STATE_RELEASED;
@@ -172,15 +147,15 @@ Flush callback for LVGL in main.c
 ```
 void my_flush_cb(lv_display_t * display, const lv_area_t * area, uint8_t * px_map)
 {
-	LCD_SetWindow(area->x1, area->y1, area->x2 + 1, area->y2 + 1);
+    LCD_SetWindow(area->x1, area->y1, area->x2 + 1, area->y2 + 1);
 
-	// ideally use by hardware
-	// lv_draw_sw_rgb565_swap(px_map, TFT_WIDTH * TFT_HEIGHT / 10);
-	uint32_t DataLen = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1) * 2;
+    // ideally use by hardware
+    // lv_draw_sw_rgb565_swap(px_map, TFT_WIDTH * TFT_HEIGHT / 10);
+    uint32_t DataLen = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1) * 2;
     DEV_Digital_Write(LCD_DC_PIN,1);
     DEV_Digital_Write(LCD_CS_PIN,0);
-	spi_write_blocking(spi1, px_map, DataLen);
-	DEV_Digital_Write(LCD_CS_PIN,1);
+    spi_write_blocking(spi1, px_map, DataLen);
+    DEV_Digital_Write(LCD_CS_PIN,1);
 
     /* IMPORTANT!!!
      * Inform LVGL that flushing is complete so buffer can be modified again. */
@@ -194,29 +169,29 @@ int main()
 {
     System_Init();
 
-	// Initialize LVGL
-	lv_init();
+    // Initialize LVGL
+    lv_init();
 
     // Connect Tick Interface
-	lv_tick_set_cb(xTaskGetTickCount);
+    lv_tick_set_cb(xTaskGetTickCount);
 
-	// Create a display
-	lv_display_t * display = lv_display_create(TFT_WIDTH, TFT_HEIGHT);
-	lv_display_set_color_format(display, LV_COLOR_FORMAT_RGB565);
-	lv_disp_set_default(display);
+    // Create a display
+    lv_display_t * display = lv_display_create(TFT_WIDTH, TFT_HEIGHT);
+    lv_display_set_color_format(display, LV_COLOR_FORMAT_RGB565);
+    lv_disp_set_default(display);
 
-	// Set draw buffer for display
+    // Set draw buffer for display
     uint32_t draw_buf_size = TFT_WIDTH * TFT_HEIGHT / 10 * LV_COLOR_FORMAT_GET_SIZE(LV_COLOR_FORMAT_RGB565);
     uint8_t *draw_buf = pvPortMalloc(draw_buf_size);
-	lv_display_set_buffers(display, draw_buf, NULL, draw_buf_size, LV_DISPLAY_RENDER_MODE_PARTIAL);
+    lv_display_set_buffers(display, draw_buf, NULL, draw_buf_size, LV_DISPLAY_RENDER_MODE_PARTIAL);
 
-	// Set flush callback
-	lv_display_set_flush_cb(display, my_flush_cb);
+    // Set flush callback
+    lv_display_set_flush_cb(display, my_flush_cb);
 
-	/* Create input device connected to Default Display. */
-	lv_indev_t * indev = lv_indev_create();        
-	lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER); 
-	lv_indev_set_read_cb(indev, my_input_read);
+    /* Create input device connected to Default Display. */
+    lv_indev_t * indev = lv_indev_create();        
+    lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER); 
+    lv_indev_set_read_cb(indev, my_input_read);
 
     init_gui();
 
