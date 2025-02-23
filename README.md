@@ -4,7 +4,8 @@ It is highly recommended to watch video tutorial as there is additional content 
 Click the following image to view this tutorial on Youtube.  
 [![Youtube video link](https://i.ytimg.com/vi/gTd6dm9ONSk/hqdefault.jpg)](//youtu.be/gTd6dm9ONSk "Youtube Video")
 
-This tutorial works with Pico v2.1.1, FreeRTOS v11.0.1 and LVGL v9.2.2.
+This tutorial works with Pico v2.1.1, FreeRTOS v11.0.1 and LVGL v9.2.2.  
+LCD TFT 3.5" ILI9488 with touch XPT2046. The document is available at https://www.waveshare.com/wiki/Pico-ResTouch-LCD-3.5  
 
 Install Raspberry Pi Pico VS Code extension and use it to create a new project.  
 
@@ -115,7 +116,8 @@ set(toolchainVersion 13_3_Rel1) # 14_1_rel1 not working
 target_link_libraries(lvgl_rtos_test pico_stdlib FreeRTOS-Kernel-Heap4 lvgl hardware_spi)
 ```
 
-Add LVGL gateway task in main.c
+Add LVGL gateway task in main.c. 
+Make sure all of your subsequent LVGL api calls through this gateway task.
 ```
 void lvgl_task(void *pvParameters) {
     LCD_SCAN_DIR lcd_scan_dir = SCAN_DIR_DFT;
