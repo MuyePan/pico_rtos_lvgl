@@ -1,209 +1,228 @@
-# Quick Start Guide For FreeRTOS and LVGL on Raspberry Pi Pico
-This page shows steps to configure project for lastest FreeRTOS and LVGL on Rpi Pico.  
-It is highly recommended to watch video tutorial as there is additional content in the video tutorial.  
-Click the following image to view this tutorial on Youtube.  
-[![Youtube video link](https://i.ytimg.com/vi/gTd6dm9ONSk/hqdefault.jpg)](//youtu.be/gTd6dm9ONSk "Youtube Video")
+# Quick Start Guide: FreeRTOS and LVGL on Raspberry Pi Pico
 
-This tutorial works with Pico v2.1.1, FreeRTOS v11.0.1 and LVGL v9.2.2.  
-LCD TFT 3.5" ILI9488 with touch XPT2046.  
-The document is available at https://www.waveshare.com/wiki/Pico-ResTouch-LCD-3.5  
+This guide walks you through setting up a project with FreeRTOS and LVGL on a Raspberry Pi Pico, using the latest versions as of February 23, 2025. For additional insights, watch the accompanying video tutorial on YouTube:  
+[![YouTube Video](https://i.ytimg.com/vi/gTd6dm9ONSk/hqdefault.jpg)](https://youtu.be/gTd6dm9ONSk "YouTube Video")
 
-Install Raspberry Pi Pico VS Code extension and use it to create a new project.  
+## Supported Versions and Hardware
+- **Raspberry Pi Pico**: v2.1.1
+- **FreeRTOS**: v11.0.1
+- **LVGL**: v9.2.2
+- **Display**: 3.5" TFT LCD (ILI9488) with XPT2046 touch controller  
+- **Reference**: [Waveshare Pico-ResTouch-LCD-3.5 Wiki](https://www.waveshare.com/wiki/Pico-ResTouch-LCD-3.5)
 
-Download lastest FreeRTOS. Make sure FreeRTOS-Kernel folder exists.   
-https://www.freertos.org/  
+## Prerequisites
+- Install the **Raspberry Pi Pico VS Code Extension** and use it to create a new project.
 
-Create FreeRTOS_Kernel_import.cmake in project folder and copy the content of following link to this file.  
-https://github.com/raspberrypi/pico-examples/blob/master/freertos/FreeRTOS_Kernel_import.cmake    
+---
 
-Create FreeRTOSConfig.h in project folder and copy the content of following link to this file.    
-https://github.com/raspberrypi/pico-examples/blob/master/freertos/FreeRTOSConfig_examples_common.h  
+## Step 1: Set Up FreeRTOS
 
-Download lastest LVGL source code.  
-https://github.com/lvgl/lvgl/tree/master  
+1. **Download FreeRTOS**  
+   - Get the latest version from [freertos.org](https://www.freertos.org/).  
+   - Ensure the `FreeRTOS-Kernel` folder is present.
 
-Create lv_conf.h in project folder and copy the content of following link to this file.   
-https://github.com/lvgl/lvgl/blob/master/lv_conf_template.h   
+2. **Create `FreeRTOS_Kernel_import.cmake`**  
+   - Add this file to your project folder.  
+   - Copy its contents from [this GitHub link](https://github.com/raspberrypi/pico-examples/blob/master/freertos/FreeRTOS_Kernel_import.cmake).
 
-Find #if 0 in lv_conf.h and change the value to 1
-```
-#if 1 /* Set this to "1" to enable content */
-```
-Find LV_USE_OS and change the value to LV_OS_FREERTOS  
-```
-#define LV_USE_OS   LV_OS_FREERTOS
-```
+3. **Create `FreeRTOSConfig.h`**  
+   - Add this file to your project folder.  
+   - Copy its contents from [this GitHub link](https://github.com/raspberrypi/pico-examples/blob/master/freertos/FreeRTOSConfig_examples_common.h).
 
-Download Pico-ResTouch-LCD-3.5 Demo.  
-https://files.waveshare.com/upload/f/fc/Pico-ResTouch-LCD-X_X_Code.zip  
-Copy LCD_Driver.h, LCD_Driver.c, LCD_Touch.h, LCD_Touch.c, DEV_Config.h and DEV_Config.c to project folder.   
-Remove unnecessary content from the files.  
-Change millisecond delay function to vTaskDelay in DEV_Config.c.  
-```
-void Driver_Delay_ms(uint32_t xms)
-{
-    vTaskDelay(pdMS_TO_TICKS(xms));
-}
-```
-Modify microsecond delay function as following in DEV_Config.c
-```
-void Driver_Delay_us(uint32_t xus)
-{
-    uint32_t start = time_us_32();
-    while ((time_us_32() - start) < xus) {
-        // Busy-wait loop
-    }
-}
-```
+---
 
-Modify TP_Scan in LCD_Touch.c
-```
-void TP_Scan(uint32_t *x, uint32_t *y)
-{
-    while(!TP_Read_TwiceADC(&sTP_DEV.Xpoint, &sTP_DEV.Ypoint));
+## Step 2: Set Up LVGL
 
-    if(LCD_2_8==id){
+1. **Download LVGL**  
+   - Get the latest source code from [github.com/lvgl/lvgl](https://github.com/lvgl/lvgl/tree/master).
 
-        if(sTP_DEV.TP_Scan_Dir == R2L_D2U) {		//Converts the result to screen coordinates
-            *x = sTP_DEV.fXfac * sTP_DEV.Xpoint + sTP_DEV.iXoff;
-            *y = sTP_DEV.fYfac * sTP_DEV.Ypoint + sTP_DEV.iYoff;
-        } else if(sTP_DEV.TP_Scan_Dir == L2R_U2D) {
-            *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Xpoint - sTP_DEV.iXoff;
-            *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Ypoint - sTP_DEV.iYoff;
-        } else if(sTP_DEV.TP_Scan_Dir == U2D_R2L) {
-            *x = sTP_DEV.fXfac * sTP_DEV.Ypoint + sTP_DEV.iXoff;
-            *y = sTP_DEV.fYfac * sTP_DEV.Xpoint + sTP_DEV.iYoff;
-        } else {
-            *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Ypoint - sTP_DEV.iXoff;
-            *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Xpoint - sTP_DEV.iYoff;
-        }
-    }else{
-        //DEBUG("(Xad,Yad) = %d,%d\r\n",sTP_DEV.Xpoint,sTP_DEV.Ypoint);
-        if(sTP_DEV.TP_Scan_Dir == R2L_D2U) {		//Converts the result to screen coordinates
-            *x = sTP_DEV.fXfac * sTP_DEV.Xpoint + sTP_DEV.iXoff;
-            *y = sTP_DEV.fYfac * sTP_DEV.Ypoint + sTP_DEV.iYoff;
-        } else if(sTP_DEV.TP_Scan_Dir == L2R_U2D) {
-            *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Xpoint - sTP_DEV.iXoff;
-            *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Ypoint - sTP_DEV.iYoff;
-        } else if(sTP_DEV.TP_Scan_Dir == U2D_R2L) {
-            *x = sTP_DEV.fXfac * sTP_DEV.Ypoint + sTP_DEV.iXoff;
-            *y = sTP_DEV.fYfac * sTP_DEV.Xpoint + sTP_DEV.iYoff;
-        } else {
-            *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Ypoint - sTP_DEV.iXoff;
-            *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Xpoint - sTP_DEV.iYoff;
-        }
-    }   
-}
-```
+2. **Create `lv_conf.h`**  
+   - Add this file to your project folder.  
+   - Copy its contents from [this template](https://github.com/lvgl/lvgl/blob/master/lv_conf_template.h).  
+   - Modify the file:  
+     - Change `#if 0` to `#if 1` to enable the content:  
+       ```c
+       #if 1 /* Set this to "1" to enable content */
+       ```  
+     - Set `LV_USE_OS` to `LV_OS_FREERTOS`:  
+       ```c
+       #define LV_USE_OS   LV_OS_FREERTOS
+       ```
 
-Modify the end of function LCD_SetGramScanWay in LCD_Driver.c to enable hardware RGB565 swap
-```
-LCD_WriteData(MemoryAccessReg_Data & (~0x08));
-```
+---
 
-Add following to CMakeList.txt
-```
-set(FREERTOS_KERNEL_PATH /home/pmy/Projects/FreeRTOS-Kernel)
+## Step 3: Add Display and Touch Drivers
 
-include(FreeRTOS_Kernel_import.cmake)
+1. **Download Demo Code**  
+   - Get the Pico-ResTouch-LCD-3.5 demo from [this link](https://files.waveshare.com/upload/f/fc/Pico-ResTouch-LCD-X_X_Code.zip).
 
-add_subdirectory(lvgl)
-```
+2. **Copy Files**  
+   - Add these files to your project folder: `LCD_Driver.h`, `LCD_Driver.c`, `LCD_Touch.h`, `LCD_Touch.c`, `DEV_Config.h`, `DEV_Config.c`.  
+   - Remove any unnecessary code from these files.
 
-Modify link libraries in CMakeList.txt
-```
-set(toolchainVersion 13_3_Rel1) # 14_1_rel1 not working
+3. **Update Delay Functions in `DEV_Config.c`**  
+   - Replace the millisecond delay:  
+     ```c
+     void Driver_Delay_ms(uint32_t xms) {
+         vTaskDelay(pdMS_TO_TICKS(xms));
+     }
+     ```  
+   - Replace the microsecond delay:  
+     ```c
+     void Driver_Delay_us(uint32_t xus) {
+         uint32_t start = time_us_32();
+         while ((time_us_32() - start) < xus) {
+             // Busy-wait loop
+         }
+     }
+     ```
 
-target_link_libraries(lvgl_rtos_test pico_stdlib FreeRTOS-Kernel-Heap4 lvgl hardware_spi)
-```
+4. **Modify `TP_Scan` in `LCD_Touch.c`**  
+   - Update the function to handle touch coordinates correctly:  
+     ```c
+     void TP_Scan(uint32_t *x, uint32_t *y) {
+         while (!TP_Read_TwiceADC(&sTP_DEV.Xpoint, &sTP_DEV.Ypoint));
 
-Add LVGL gateway task in main.c. 
-Make sure all of your subsequent LVGL api calls through this gateway task.
-```
-void lvgl_task(void *pvParameters) {
-    LCD_SCAN_DIR lcd_scan_dir = SCAN_DIR_DFT;
-    LCD_Init(lcd_scan_dir, 800);
-    TP_Init(lcd_scan_dir);
-    TP_GetAdFac();
+         if (LCD_2_8 == id) {
+             if (sTP_DEV.TP_Scan_Dir == R2L_D2U) {
+                 *x = sTP_DEV.fXfac * sTP_DEV.Xpoint + sTP_DEV.iXoff;
+                 *y = sTP_DEV.fYfac * sTP_DEV.Ypoint + sTP_DEV.iYoff;
+             } else if (sTP_DEV.TP_Scan_Dir == L2R_U2D) {
+                 *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Xpoint - sTP_DEV.iXoff;
+                 *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Ypoint - sTP_DEV.iYoff;
+             } else if (sTP_DEV.TP_Scan_Dir == U2D_R2L) {
+                 *x = sTP_DEV.fXfac * sTP_DEV.Ypoint + sTP_DEV.iXoff;
+                 *y = sTP_DEV.fYfac * sTP_DEV.Xpoint + sTP_DEV.iYoff;
+             } else {
+                 *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Ypoint - sTP_DEV.iXoff;
+                 *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Xpoint - sTP_DEV.iYoff;
+             }
+         } else {
+             if (sTP_DEV.TP_Scan_Dir == R2L_D2U) {
+                 *x = sTP_DEV.fXfac * sTP_DEV.Xpoint + sTP_DEV.iXoff;
+                 *y = sTP_DEV.fYfac * sTP_DEV.Ypoint + sTP_DEV.iYoff;
+             } else if (sTP_DEV.TP_Scan_Dir == L2R_U2D) {
+                 *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Xpoint - sTP_DEV.iXoff;
+                 *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Ypoint - sTP_DEV.iYoff;
+             } else if (sTP_DEV.TP_Scan_Dir == U2D_R2L) {
+                 *x = sTP_DEV.fXfac * sTP_DEV.Ypoint + sTP_DEV.iXoff;
+                 *y = sTP_DEV.fYfac * sTP_DEV.Xpoint + sTP_DEV.iYoff;
+             } else {
+                 *x = sLCD_DIS.LCD_Dis_Column - sTP_DEV.fXfac * sTP_DEV.Ypoint - sTP_DEV.iXoff;
+                 *y = sLCD_DIS.LCD_Dis_Page - sTP_DEV.fYfac * sTP_DEV.Xpoint - sTP_DEV.iYoff;
+             }
+         }
+     }
+     ```
 
-    while (1) {
-        uint32_t time_till_next = lv_timer_handler();
-        vTaskDelay(pdMS_TO_TICKS(time_till_next));
-    }
-}
-```
+5. **Enable Hardware RGB565 Swap in `LCD_Driver.c`**  
+   - At the end of `LCD_SetGramScanWay`, add:  
+     ```c
+     LCD_WriteData(MemoryAccessReg_Data & (~0x08));
+     ```
 
-Callback to read input device data in main.c
-```
-void my_input_read(lv_indev_t * indev, lv_indev_data_t * data)
-{
-    if(!DEV_Digital_Read(TP_IRQ_PIN)) {
-        TP_Scan(&data->point.x, &data->point.y);
-        data->state = LV_INDEV_STATE_PRESSED;
-    } else {
-        data->state = LV_INDEV_STATE_RELEASED;
-    }
-}
-```
+---
 
-Flush callback for LVGL in main.c
-```
-void my_flush_cb(lv_display_t * display, const lv_area_t * area, uint8_t * px_map)
-{
-    LCD_SetWindow(area->x1, area->y1, area->x2 + 1, area->y2 + 1);
+## Step 4: Configure CMake
 
-    // ideally use by hardware
-    // lv_draw_sw_rgb565_swap(px_map, TFT_WIDTH * TFT_HEIGHT / 10);
-    uint32_t DataLen = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1) * 2;
-    DEV_Digital_Write(LCD_DC_PIN,1);
-    DEV_Digital_Write(LCD_CS_PIN,0);
-    spi_write_blocking(spi1, px_map, DataLen);
-    DEV_Digital_Write(LCD_CS_PIN,1);
+1. **Update `CMakeLists.txt`**  
+   - Add FreeRTOS path and include:  
+     ```cmake
+     set(FREERTOS_KERNEL_PATH /home/pmy/Projects/FreeRTOS-Kernel)
+     include(FreeRTOS_Kernel_import.cmake)
+     add_subdirectory(lvgl)
+     ```  
+   - Link libraries (use toolchain version 13_3_Rel1, as 14_1_rel1 is incompatible):  
+     ```cmake
+     set(toolchainVersion 13_3_Rel1)
+     target_link_libraries(lvgl_rtos_test pico_stdlib FreeRTOS-Kernel-Heap4 lvgl hardware_spi)
+     ```
 
-    /* IMPORTANT!!!
-     * Inform LVGL that flushing is complete so buffer can be modified again. */
-    lv_display_flush_ready(display);
-}
-``` 
+---
 
-main function in main.c
-```
-int main()
-{
-    System_Init();
+## Step 5: Implement Main Code in `main.c`
 
-    // Initialize LVGL
-    lv_init();
+1. **LVGL Gateway Task**  
+   ```c
+   void lvgl_task(void *pvParameters) {
+       LCD_SCAN_DIR lcd_scan_dir = SCAN_DIR_DFT;
+       LCD_Init(lcd_scan_dir, 800);
+       TP_Init(lcd_scan_dir);
+       TP_GetAdFac();
 
-    // Connect Tick Interface
-    lv_tick_set_cb(xTaskGetTickCount);
+       while (1) {
+           uint32_t time_till_next = lv_timer_handler();
+           vTaskDelay(pdMS_TO_TICKS(time_till_next));
+       }
+   }
+   ```  
+   - Ensure all LVGL API calls go through this task.
 
-    // Create a display
-    lv_display_t * display = lv_display_create(TFT_WIDTH, TFT_HEIGHT);
-    lv_display_set_color_format(display, LV_COLOR_FORMAT_RGB565);
-    lv_disp_set_default(display);
+2. **Input Device Callback**  
+   ```c
+   void my_input_read(lv_indev_t *indev, lv_indev_data_t *data) {
+       if (!DEV_Digital_Read(TP_IRQ_PIN)) {
+           TP_Scan(&data->point.x, &data->point.y);
+           data->state = LV_INDEV_STATE_PRESSED;
+       } else {
+           data->state = LV_INDEV_STATE_RELEASED;
+       }
+   }
+   ```
 
-    // Set draw buffer for display
-    uint32_t draw_buf_size = TFT_WIDTH * TFT_HEIGHT / 10 * LV_COLOR_FORMAT_GET_SIZE(LV_COLOR_FORMAT_RGB565);
-    uint8_t *draw_buf = pvPortMalloc(draw_buf_size);
-    lv_display_set_buffers(display, draw_buf, NULL, draw_buf_size, LV_DISPLAY_RENDER_MODE_PARTIAL);
+3. **Flush Callback for LVGL**  
+   ```c
+   void my_flush_cb(lv_display_t *display, const lv_area_t *area, uint8_t *px_map) {
+       LCD_SetWindow(area->x1, area->y1, area->x2 + 1, area->y2 + 1);
+       uint32_t DataLen = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1) * 2;
+       DEV_Digital_Write(LCD_DC_PIN, 1);
+       DEV_Digital_Write(LCD_CS_PIN, 0);
+       spi_write_blocking(spi1, px_map, DataLen);
+       DEV_Digital_Write(LCD_CS_PIN, 1);
+       lv_display_flush_ready(display); // Notify LVGL that flushing is done
+   }
+   ```
 
-    // Set flush callback
-    lv_display_set_flush_cb(display, my_flush_cb);
+4. **Main Function**  
+   ```c
+   int main() {
+       System_Init();
+       lv_init();
+       lv_tick_set_cb(xTaskGetTickCount);
 
-    /* Create input device connected to Default Display. */
-    lv_indev_t * indev = lv_indev_create();        
-    lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER); 
-    lv_indev_set_read_cb(indev, my_input_read);
+       // Create display
+       lv_display_t *display = lv_display_create(TFT_WIDTH, TFT_HEIGHT);
+       lv_display_set_color_format(display, LV_COLOR_FORMAT_RGB565);
+       lv_disp_set_default(display);
 
-    init_gui();
+       // Set draw buffer
+       uint32_t draw_buf_size = TFT_WIDTH * TFT_HEIGHT / 10 * LV_COLOR_FORMAT_GET_SIZE(LV_COLOR_FORMAT_RGB565);
+       uint8_t *draw_buf = pvPortMalloc(draw_buf_size);
+       lv_display_set_buffers(display, draw_buf, NULL, draw_buf_size, LV_DISPLAY_RENDER_MODE_PARTIAL);
 
-    // Create the Hello World task
-    xTaskCreate(lvgl_task, "lvgl_task", 1024, NULL, 1, NULL);    
+       // Set flush callback
+       lv_display_set_flush_cb(display, my_flush_cb);
 
-    // Start FreeRTOS scheduler
-    vTaskStartScheduler();
+       // Create input device
+       lv_indev_t *indev = lv_indev_create();
+       lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+       lv_indev_set_read_cb(indev, my_input_read);
 
-    panic("RTOS kernel not running!"); // we shouldn't get here
-}
-```
+       init_gui();
+
+       // Start LVGL task
+       xTaskCreate(lvgl_task, "lvgl_task", 1024, NULL, 1, NULL);
+       vTaskStartScheduler();
+
+       panic("RTOS kernel not running!"); // Should not reach here
+   }
+   ```
+
+---
+
+## Notes
+- Replace `/home/pmy/Projects/FreeRTOS-Kernel` with your actual FreeRTOS path in `CMakeLists.txt`.
+- Define `TFT_WIDTH` and `TFT_HEIGHT` based on your display (e.g., 480x320 for the 3.5" LCD).
+- Add `init_gui()` or your custom UI code before starting the scheduler.
+
+This guide ensures a smooth setup for running FreeRTOS and LVGL on your Raspberry Pi Pico with the specified display.
