@@ -124,7 +124,7 @@ This guide provides step-by-step instructions to set up a project with FreeRTOS 
      ```
 
 5. **Enable Hardware RGB565 Swap in `LCD_Driver.c`**  
-   - Add this line at the end of `LCD_SetGramScanWay`:  
+   - Modify last line of `LCD_SetGramScanWay`:  
      ```c
      LCD_WriteData(MemoryAccessReg_Data & (~0x08));
      ```
