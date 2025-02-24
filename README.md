@@ -1,7 +1,7 @@
 # Quick Start Guide: FreeRTOS and LVGL on Raspberry Pi Pico
 
 This guide provides step-by-step instructions to set up a project with FreeRTOS and LVGL on a Raspberry Pi Pico, compatible with the latest versions as of February 23, 2025. For extra tips and visuals, check out the companion video tutorial on YouTube:  
-[![YouTube Video](https://i.ytimg.com/vi/gTd6dm9ONSk/hqdefault.jpg)](https://youtu.be/gTd6dm9ONSk "YouTube Video")
+[![YouTube Video](https://i.ytimg.com/vi/cfpH3ro9d80/hqdefault.jpg)](https://youtu.be/cfpH3ro9d80 "YouTube Video")
 
 ## Supported Versions and Hardware
 - **Raspberry Pi Pico**: v2.1.1
